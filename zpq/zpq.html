@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title></title>
+<style type="text/css">
+body{
+	margin: 0;
+	font-size: 0;
+}
+#wrap{
+	width: 630px;
+	height: 500px;
+	padding: 5px;
+	background: #b5b5ad;
+	margin: 100px auto;
+}
+#img{
+	width: 630px;
+}
+img{
+	float: left;
+	width: 200px;
+	height: 140px;
+	margin: 5px;
+	vertical-align: top;
+}
+button{
+	display: block;
+	width: 100%;
+	height: 50px;
+	font: 24px/50px "微软雅黑";
+	background: #8c7373;
+	outline: none;
+	border: none;
+	border-radius: 20px;
+}
+</style>
+</head>
+<body>
+	<div id="wrap">
+		<button>愚公移山</button>
+		<div id="img">
+			<img src="img/1.png"/>
+			<img src="img/2.png"/>
+			<img src="img/3.png"/>
+			<img src="img/4.png"/>
+			<img src="img/5.png"/>
+			<img src="img/6.png"/>
+			<img src="img/7.png"/>
+			<img src="img/8.png"/>
+			<img src="img/9.png"/>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="miaov.js"></script>
+<script type="text/javascript">
+ 	window.onload = function(){
+ 		var btn = document.getElementsByTagName("button")[0];
+ 		var imgs =Array.from(document.getElementsByTagName("img"));
+ 		var wrap = document.getElementById("wrap");
+ 		var arr = [];
+
+ 		imgs.forEach(function(item,i){
+ 			arr.push([item.offsetLeft,item.offsetTop]);
+ 		})
+ 		arr.forEach(function(item,i){
+ 			imgs[i].style.margin = 0;
+ 			imgs[i].style.position = "absolute";
+ 			imgs[i].style.left = arr[i][0]+"px";
+ 			imgs[i].style.top = arr[i][1]+"px";
+ 		})
+
+ 		btn.onclick = function(){
+ 			arr.sort(function(){
+ 				return 0.5 - Math.random();
+ 			})
+ 			arr.forEach(function(item,i){
+ 				mTween(imgs[i],{left:arr[i][0],top:arr[i][1]},500,"easeOut")
+ 			})
+ 		}
+
+ 		arr.forEach(function(item,i){
+ 			imgs[i].onmousedown = function(e){
+ 				var xx = e.pageX-imgs[i].offsetLeft;
+ 				var yy = e.pageY-imgs[i].offsetTop;
+ 				document.onmousemove = function(e){
+ 					imgs[i].style.left = e.pageX-xx+"px";
+ 					imgs[i].style.top = e.pageY-yy+"px";
+ 					imgs[i].style.zIndex = 99;
+ 				}
+ 				return false;
+ 			}
+ 		})
+ 		for(var i=0; i<arr.length; i++){
+ 			imgs[i].index = i;
+ 			imgs[i].onmouseup = function(e){
+ 				var xy = [];
+ 				var aa = 0;
+ 				document.onmousemove = null;
+ 				for(var b=0; b<arr.length; b++){
+ 					var xxx = Math.abs(this.offsetLeft-arr[b][0])*Math.abs(this.offsetLeft-arr[b][0]);
+ 					var yyy = Math.abs(this.offsetTop-arr[b][1])*Math.abs(this.offsetTop-arr[b][1]);
+ 					xy.push(xxx+yyy)
+ 				}
+ 				for(var b=0; b<arr.length; b++){
+ 					if(xy[b] == Math.min.apply(null,xy)){
+ 						aa = b;
+ 					}
+ 				}
+ 				var bb = arr[this.index];
+ 				arr[this.index] = arr[aa];
+ 				arr[aa] = bb;
+ 				for(var b=0; b<arr.length; b++){
+ 					mTween(imgs[b],{left:arr[b][0],top:arr[b][1]},500,"easeOut")
+ 				}
+ 				this.style.zIndex = 1;
+ 			}
+ 		}
+ 	};
+</script>
+</html>
